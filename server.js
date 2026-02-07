@@ -18,6 +18,13 @@ const transporter = nodemailer.createTransport({
   });
   
 
+app.get('/contact', (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'Contact API is working',
+    });
+  });
+  
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
