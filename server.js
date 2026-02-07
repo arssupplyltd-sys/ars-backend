@@ -8,14 +8,15 @@ app.use(cors());
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+    host: "mail.arssupply.co.uk",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "sales@arssupply.co.uk",
+      pass: process.env.SMTP_PASS,
+    },
+  });
+  
 
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
