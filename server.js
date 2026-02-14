@@ -19,12 +19,14 @@ app.use(express.json());
  * - Use Gmail APP PASSWORD (not normal password)
  */
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,      // your gmail
-    pass: process.env.GMAIL_APP_PASS,  // app password
-  },
-});
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASS,
+    },
+  });
 
 app.get("/contact", (req, res) => {
   res.status(200).json({
@@ -51,9 +53,10 @@ app.post("/contact", async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error("MAIL ERROR:", error);
-    res.status(500).json({ success: false });
+    console.log("MAIL ERROR:", error);
+    res.status(500).json({ success: false, error: error.message });
   }
+  
 });
 
 app.listen(5000, () => console.log("Server running on port 5000"));
