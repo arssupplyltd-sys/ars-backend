@@ -4,37 +4,42 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+
 app.use(cors({
-    origin: "*",
-    methods: ["GET","POST"]
-  }));
+  origin: "*",
+  methods: ["GET", "POST"]
+}));
+
 app.use(express.json());
 
+/**
+ * Gmail SMTP transporter
+ * IMPORTANT:
+ * - Use Gmail address
+ * - Use Gmail APP PASSWORD (not normal password)
+ */
 const transporter = nodemailer.createTransport({
-    host: "mail.arssupply.co.uk",
-    port: 465,
-    secure: true,
-    auth: {
-      user: "sales@arssupply.co.uk",
-      pass: process.env.SMTP_PASS,
-    },
-  });
-  
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,      // your gmail
+    pass: process.env.GMAIL_APP_PASS,  // app password
+  },
+});
 
-app.get('/contact', (req, res) => {
-    res.status(200).json({
-      success: true,
-      message: 'Contact API is working',
-    });
+app.get("/contact", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Contact API is working",
   });
-  
+});
+
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   try {
     await transporter.sendMail({
-      from: `"Website Contact" <${process.env.SMTP_USER}>`,
-      to: "sales@arssupply.co.uk",
+      from: `"Website Contact Form" <${process.env.GMAIL_USER}>`,
+      to: process.env.GMAIL_USER, // mail will come to your gmail
       subject: "New Contact Form Message",
       html: `
         <h3>New enquiry from website</h3>
@@ -46,7 +51,7 @@ app.post("/contact", async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error(error);
+    console.error("MAIL ERROR:", error);
     res.status(500).json({ success: false });
   }
 });
